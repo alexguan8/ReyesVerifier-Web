@@ -112,6 +112,7 @@
                         </button>
                         <button id="selected" class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">File Type</button>
                         <input type="hidden" name="selectedHidden" id="selectedHidden" value="">
+                        <input type="hidden" name="usernameHidden" id="usernameHidden" value="">
                         <div class="dropdown-menu" name="types">
                             <a class="dropdown-item" href="#">Inventory</a>
                             <a class="dropdown-item" href="#">Sales</a>
@@ -146,6 +147,15 @@
                 <div id="alert_wrapper"></div>
 
                 <p> Select a file to verify, then choose the file type out of the dropdown menu. Press verify, and we'll handle everything else for you! </p>
+
+                <br>
+                <br>
+
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Username</label>
+                    <input type="text" class="form-control" name="exampleInputEmail1" id="exampleInputEmail1" placeholder="Enter username">
+                    <small id="emailHelp" class="form-text text-muted">This is how we will identify who is uploading the files.</small>
+                </div>
             </div>
         </div>
 

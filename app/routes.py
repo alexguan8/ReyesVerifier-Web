@@ -23,6 +23,8 @@ VERIFIED_FILE_PATH = os.path.join(APP_ROOT, 'VERIFIED_FILES')
 
 JSON_FILE_PATH = "app/formatSettings.json"
 
+USER_UPLOADING = "Some User"
+
 def numPreviousUploads(fileName):
     listOfFiles = os.listdir(VERIFIED_FILE_PATH)
     count = 0
@@ -32,11 +34,28 @@ def numPreviousUploads(fileName):
 
     return count
 
-def stripExtension(fileName):
-    return os.path.splitext(fileName)[0]
+def stripExtension(fileNameWithExt):
+    return os.path.splitext(fileNameWithExt)[0]
 
-def stripDate(fileNameWithDate):
-    return fileNameWithDate.rsplit("_", 1)[0]
+def stripDate(fileName):
+    return fileName.rsplit("_", 1)[0]
+
+def getUsername(fileName):
+    rawName = stripExtension(fileName)
+    rawName = stripDate(rawName)
+
+    username = rawName.rsplit("_", 1)[1]
+
+    if len(username) == 0:
+        return "Some User"
+    else:
+        return username
+    
+
+def getRawName(fileName):
+    rawName = stripExtension(fileName)
+    rawName = stripDate(rawName)
+    return rawName.rsplit("_", 1)[0]
 
 def dateUploaded(fileName):
     raw_name = stripExtension(fileName)
@@ -57,6 +76,9 @@ def index():
 
         file = request.files["file"]
         fileType = request.form.get("fileTypeData")
+        username = request.form.get("usernameData")
+
+        print("username: " + username)
 
         print("File uploaded")
         print(file)
@@ -79,7 +101,7 @@ def index():
         verified = verifier.verifyFile()
         #raw_name + time.strftime("%Y%m%d-%H%M%S") + ".csv"
         if (verified == True):
-            copyfile(filename, VERIFIED_FILE_PATH + "/" + raw_name + "_" + time.strftime("%Y%m%d-%H%M%S") + ".csv")
+            copyfile(filename, VERIFIED_FILE_PATH + "/" + raw_name + "_" + username + "_" + time.strftime("%Y%m%d-%H%M%S") + ".csv")
 
         os.remove(filename)
         
@@ -112,16 +134,16 @@ def history():
     listOfFiles = os.listdir(VERIFIED_FILE_PATH)
     output=""
     for file in listOfFiles:
-        raw_name = stripExtension(file)
-        raw_name = stripDate(raw_name)
+        raw_name = getRawName(file)
         fileType = getFileType(raw_name)
         coID = getCoID(raw_name)
         date = dateUploaded(file)
+        username = getUsername(file)
         print("adding a row to output for file: " + file)
         output = ("<tr><td><a href= '/uploads/VERIFIED_FILES/" + file + "'>" + raw_name + "</a></td>" +
         "<td>" + coID + "</td>" +
         "<td>" + fileType + "</td>" + 
-        "<td>Bobby Jones the Third</td>" + 
+        "<td>" + username + "</td>" + 
         "<td>" + date + "</td>" + 
         "</tr>")
         flash(output)
@@ -150,6 +172,6 @@ def settings():
     
         return ('', 204)
 
-    flash("<a href= '/uploads/formatSettings.json'>Current Settings File</a>")
+    flash("<a href= '/uploads/formatSe  ings.json'>Current Settings File</a>")
     return render_template("settings.html")
 

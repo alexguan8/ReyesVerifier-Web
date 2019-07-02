@@ -43,9 +43,9 @@ class Validator:
             self.message += "The labels are not valid for filetype " + self.fileType + "! Check if some columns are swapped or a label is misspelled."
         return valid
 
-    def validateDateFormat(self, date_text):
+    def validateDateFormat(self, date_text, date_format):
         try:
-            datetime.datetime.strptime(date_text, '%m/%d/%Y')
+            datetime.datetime.strptime(date_text, date_format)
             return True
         except ValueError:
             return False
@@ -137,11 +137,11 @@ class Validator:
 
         return True
 
-    def checkColDates(self, key):
+    def checkColDates(self, key, date_format):
         col = list(self.dict.keys()).index(key)
         values = self.dict[key]
         for index, value in enumerate(values):
-            if self.validateDateFormat(value) == False:
+            if self.validateDateFormat(value, date_format) == False:
                 self.message += "Not a date on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
 
@@ -180,7 +180,7 @@ class Validator:
                     print("There is an issue in col " + str(index))
                     valid = False
             if (value['type'] == "date"):
-                if (self.checkColDates(key) == False):
+                if (self.checkColDates(key, value['format']) == False):
                     print("There is an issue in col " + str(index))
                     valid = False
             if (value['type'] == "percentage"):

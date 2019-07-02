@@ -3,7 +3,13 @@ $(document).ready(function() {
     resetInput();
 });
 
-//Jquery stuff
+$("#exampleInputEmail1").change(function(e) {
+    alert($(this).val());
+    e.preventDefault();
+
+    $("input#usernameHidden").val($(this).val())
+});
+
 $('#csvFileInput').on('change', function() {
     //get the file name
     var pathwithfilename = $(this).val();
@@ -118,6 +124,7 @@ function upload(url) {
 
     value = $("#selectedHidden").val();
     data.append("fileTypeData", value)
+    data.append("usernameData", $("#usernameHidden").val())
 
     // request progress handler
     request.upload.addEventListener("progress", function(e) {
