@@ -94,9 +94,9 @@ def index():
         #create end string
         output = verifier.verifyFileToStr()
         if (numPreviousUploads(raw_name) > 0):
-            output += "<br>" + filename + " has " + str(numPreviousUploads(raw_name)) + " previously verified version(s). Check the history tab to view/download previous versions."
+            output += " under username " + username + "<br>" + filename + " has " + str(numPreviousUploads(raw_name)) + " previously verified version(s). Check the history tab to view/download previous versions."
         else:
-            output += "<br>" + filename + " has never been verified."
+            output += " under username " + username + "<br>" + filename + " has never been verified."
 
         verified = verifier.verifyFile()
         #raw_name + time.strftime("%Y%m%d-%H%M%S") + ".csv"
@@ -132,7 +132,7 @@ def getCoID(fileName):
 @app.route('/history')
 def history():
     listOfFiles = os.listdir(VERIFIED_FILE_PATH)
-    output=""
+    output="" 
     for file in listOfFiles:
         raw_name = getRawName(file)
         fileType = getFileType(raw_name)
