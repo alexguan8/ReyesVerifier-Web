@@ -4,7 +4,6 @@ $(document).ready(function() {
 });
 
 $("#exampleInputEmail1").change(function(e) {
-    alert($(this).val());
     e.preventDefault();
 
     $("input#usernameHidden").val($(this).val())

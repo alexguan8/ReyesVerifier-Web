@@ -2,6 +2,8 @@
 
 Data verification tool for Reyes Beverage Group
 
+Setup: Install all dependencies with pip install -r requirements.txt
+
 Currently checks files with a Bootstrap/Flask powered web UI for:
 - Labels correct and in the right order, based on what file type it is (INVENTORY, SALES, PAYROLL, etc.)
 - The rows are all filled out (there isn't a row missing some columns)

@@ -4,7 +4,6 @@ from flask import render_template, request, flash, redirect, make_response, json
 from werkzeug.utils import secure_filename
 from shutil import copyfile
 from datetime import datetime
-from tabulate import tabulate
 import json
 import time
 import os
