@@ -82,7 +82,7 @@ class Validator:
         for index, raw_value in enumerate(values):
             value = raw_value.replace(',','')
             try:
-                val = int(value)
+                int(value)
             except ValueError:
                 self.message += "Not a valid integer on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
