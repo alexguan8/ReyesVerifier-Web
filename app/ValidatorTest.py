@@ -93,7 +93,7 @@ class Validator:
                     return False
             elif token < 0:
                 if int(value) > 0:
-                    self.message += "Number greater than 0 on row " + str(index + 2) + " col " + str(col+1) + ": " + value + "<br>"
+                    self.message += "Number greater than 0 on row " + str(index + 2) + " col " + str(col+1) + ": " + " (" + key +"): " + value + "<br>"
                     return False
 
         return True

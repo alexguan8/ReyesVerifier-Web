@@ -172,6 +172,6 @@ def settings():
     
         return ('', 204)
 
-    flash("<a href= '/uploads/formatSe  ings.json'>Current Settings File</a>")
+    flash("<a href= '/uploads/formatSettings.json'>Current Settings File</a>")
     return render_template("settings.html")
 
