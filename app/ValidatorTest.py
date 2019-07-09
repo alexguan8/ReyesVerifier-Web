@@ -81,7 +81,9 @@ class Validator:
         values = self.dict[key]
         for index, raw_value in enumerate(values):
             value = raw_value.replace(',','')
-            if value.isdigit() == False:
+            try:
+                val = int(value)
+            except ValueError:
                 self.message += "Not a valid integer on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
             
