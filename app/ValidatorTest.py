@@ -3,6 +3,7 @@ import numpy as np
 import datetime
 import io
 import json
+import pyodbc
 
 class Validator:    
     def __init__(self, fileName, fileType, settingsPath):
@@ -31,6 +32,28 @@ class Validator:
             self.dict = None
             return
         self.dict = df.to_dict(orient='list')
+
+    def getValidCoIDs(self):
+        connection = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
+                                        'Server=sdbidinazsdbsx002.database.windows.net;'
+                                        'Database=RBG_DM;'
+                                        'uid=kmahajan@reyesholdings.com;pwd=Welcome9399!;'
+                                        "Trusted_Connection=yes;")
+        cursor = connection.cursor()
+
+        SQLCommand = ("SELECT REPORTING_ENTITY_DIM_ID FROM RBD.D_REPORTING_ENTITY")
+
+        cursor.execute(SQLCommand)
+        companies = []
+
+        for row in cursor.fetchall():
+            #print(row[1])
+            companies.append(row[0])
+
+
+        connection.close()
+        
+        return companies
     
     def checkLabels(self):    
         valid = True
@@ -118,13 +141,20 @@ class Validator:
 
         return True
     
-    def checkColIsString(self, key):
+    def checkColIsString(self, key, format):
         col = list(self.dict.keys()).index(key)
         values = self.dict[key]
         for index, value in enumerate(values):
             if self.hasNumber(value):
                 self.message += "Not a valid string on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
+
+        if (format == "companys"):
+            validCos = self.getValidCoIDs()
+            for index, value in enumerate(values):
+                if value not in validCos:
+                    self.message += "Not a valid company ID on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
+                    return False
         
         return True
 
@@ -170,7 +200,7 @@ class Validator:
         for index, (key, value) in enumerate(self.settings[self.fileType].items()):
             print(value['type'] + " in col " + str(index))
             if (value['type'] == "string"):
-                if (self.checkColIsString(key) == False):
+                if (self.checkColIsString(key, value['format']) == False):
                     print("There is an issue with dates in col " + str(index))
                     valid = False
             if (value['type'] == "int"):
