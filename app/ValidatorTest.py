@@ -4,6 +4,8 @@ import datetime
 import io
 import json
 import pyodbc
+from os import path
+import os
 
 class Validator:    
     def __init__(self, fileName, fileType, settingsPath):
@@ -52,7 +54,7 @@ class Validator:
 
 
         connection.close()
-        
+        print(companies)
         return companies
     
     def checkLabels(self):    
@@ -67,6 +69,7 @@ class Validator:
         return valid
 
     def validateDateFormat(self, date_text, date_format):
+        #print(date_text)
         try:
             datetime.datetime.strptime(date_text, date_format)
             return True
@@ -172,9 +175,13 @@ class Validator:
     def checkColDates(self, key, date_format):
         col = list(self.dict.keys()).index(key)
         values = self.dict[key]
+        now = datetime.datetime.now()
         for index, value in enumerate(values):
             if self.validateDateFormat(value, date_format) == False:
                 self.message += "Not a date on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
+                return False
+            if str(now.year) != value[-4:] :
+                self.message += "Invalid file - Date does not have the current year on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
 
         return True
@@ -230,4 +237,8 @@ class Validator:
         else:
             return self.fileName + ": <br>" + self.message
         
-
+    
+    path = '//reyesholdings.com/rhcorp/Business Intelligence/ETL/Software'
+    
+    print(os.listdir(path))   
+    
