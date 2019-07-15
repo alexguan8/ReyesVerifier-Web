@@ -15,6 +15,7 @@ class Validator:
         self.SETTINGS_FILE = settingsPath
         self.dict = dict()
         self.message = ""
+        self.companies = []
 
         self.parseJSON()
         self.parseCSV()
@@ -54,13 +55,14 @@ class Validator:
 
 
         connection.close()
-        print(companies)
+        self.companies = companies
+      
         return companies
     
     def checkLabels(self):    
         valid = True
+       
         for validType in self.settings.keys():
-            print(validType)
             if self.fileType.lower() == validType.lower():
                 valid = list(self.dict.keys()) == list(self.settings[validType].keys())
         
@@ -103,6 +105,7 @@ class Validator:
             return True
             
     def checkColInteger(self, key, token):
+        print(key)
         col = list(self.dict.keys()).index(key)
         values = self.dict[key]
         for index, raw_value in enumerate(values):
@@ -202,43 +205,63 @@ class Validator:
         if (self.compareFileNameandType() == False or self.dict == None or self.checkLabels() == False):
             return False
 
-        valid = True
+        if (self.checkLabels() == True):
+            
+            for coID in self.companies:
+                if coID == 'FGC' and ('FGC' in self.fileName): 
+                    for label in self.dict.keys():
+                        if label == 'CostCtr':
+                            for index,val in enumerate(self.dict['CostCtr']):
+                                if int(val) < 2100 or int(val) > 7410:
+                                    self.message += "Not a valid CostCtr on row " + str(index + 2) + " col " + str(col+1) + " (" + label + " has to be between 2100 and 7410 for FGC" + "): " + val + "<br>"
+                                    return False
+                if coID == 'HJL' and ('HJL' in self.fileName):           
+                    for label in self.dict.keys():
+                        print(label)
+                        if label == 'CostCtr':
+                            col = list(self.dict.keys()).index(label)
+                            for index,val in enumerate(self.dict['CostCtr']):
+                                if int(val) < 2100 or int(val) > 7110:
+                                    self.message += "Not a valid CostCtr on row " + str(index + 2) + " col " + str(col+1) + " (" + label + " has to be between 2100 and 7110 for HJL" + "): " + val + "<br>"
+                                    return False
+
         #loop through the column parameters
         for index, (key, value) in enumerate(self.settings[self.fileType].items()):
-            print(value['type'] + " in col " + str(index))
+            #print(value['type'] + " in col " + str(index))
             if (value['type'] == "string"):
                 if (self.checkColIsString(key, value['format']) == False):
                     print("There is an issue with dates in col " + str(index))
-                    valid = False
+                    return False
             if (value['type'] == "int"):
                 if (self.checkColInteger(key, int(value['format'])) == False):
                     print("There is an issue with integers in col " + str(index))
-                    valid = False
+                    return False
             if (value['type'] == "float"):
                 if (self.checkColFloat(key, float(value['format'])) == False):
                     print("There is an issue in col " + str(index))
-                    valid = False
+                    return False
             if (value['type'] == "date"):
                 if (self.checkColDates(key, value['format']) == False):
                     print("There is an issue in col " + str(index))
-                    valid = False
+                    return False
             if (value['type'] == "percentage"):
                 if (self.checkColIsPercentage(key) == False):
                     print("There is an issue in col " + str(index))
-                    valid = False
+                    return False
 
-        return valid
+        return True
                 
 
     def verifyFileToStr(self):
         print("Verifying " + self.fileName + " as filetype " + self.fileType)
+        print(self.verifyFile())
         if self.verifyFile() == True:
             return self.fileName + " is valid! Uploaded to /VERIFIED_FILES"
         else:
             return self.fileName + ": <br>" + self.message
         
     
-    path = '//reyesholdings.com/rhcorp/Business Intelligence/ETL/Software'
+    '''path = '//reyesholdings.com/rhcorp/Business Intelligence/ETL/Software'
     
-    print(os.listdir(path))   
+    print(os.listdir(path))'''   
     
