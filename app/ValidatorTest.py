@@ -24,6 +24,7 @@ class Validator:
          with open(self.SETTINGS_FILE) as json_file:  
             self.settings = json.load(json_file)
 
+
     def parseCSV(self):
         df = pd.read_csv(self.fileName, dtype='str') #we want strings because some are not ints
         df.columns = df.columns.str.strip()
@@ -159,6 +160,7 @@ class Validator:
             validCos = self.getValidCoIDs()
             for index, value in enumerate(values):
                 if value not in validCos:
+                    self.message = ''
                     self.message += "Not a valid company ID on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                     return False
         
@@ -216,6 +218,7 @@ class Validator:
                                 try:
                                     int(val)
                                 except ValueError:
+                                    self.message = ''
                                     self.message += "Not a valid integer on row " + str(index + 2) + " col " + str(col+1) + " (" + label +"): " + val + "<br>"
                                     return False
                                 if int(val) < 2100 or int(val) > 7410:
@@ -271,8 +274,5 @@ class Validator:
         else:
             return self.fileName + ": <br>" + self.message
         
-    
-    '''path = '//reyesholdings.com/rhcorp/Business Intelligence/ETL/Software'
-    
-    print(os.listdir(path))'''   
+      
     
