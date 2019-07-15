@@ -211,7 +211,13 @@ class Validator:
                 if coID == 'FGC' and ('FGC' in self.fileName): 
                     for label in self.dict.keys():
                         if label == 'CostCtr':
+                            col = list(self.dict.keys()).index(label)
                             for index,val in enumerate(self.dict['CostCtr']):
+                                try:
+                                    int(val)
+                                except ValueError:
+                                    self.message += "Not a valid integer on row " + str(index + 2) + " col " + str(col+1) + " (" + label +"): " + val + "<br>"
+                                    return False
                                 if int(val) < 2100 or int(val) > 7410:
                                     self.message += "Not a valid CostCtr on row " + str(index + 2) + " col " + str(col+1) + " (" + label + " has to be between 2100 and 7410 for FGC" + "): " + val + "<br>"
                                     return False
@@ -221,6 +227,11 @@ class Validator:
                         if label == 'CostCtr':
                             col = list(self.dict.keys()).index(label)
                             for index,val in enumerate(self.dict['CostCtr']):
+                                try:
+                                    int(val)
+                                except ValueError:
+                                    self.message += "Not a valid integer on row " + str(index + 2) + " col " + str(col+1) + " (" + label +"): " + val + "<br>"
+                                    return False
                                 if int(val) < 2100 or int(val) > 7110:
                                     self.message += "Not a valid CostCtr on row " + str(index + 2) + " col " + str(col+1) + " (" + label + " has to be between 2100 and 7110 for HJL" + "): " + val + "<br>"
                                     return False
