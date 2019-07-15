@@ -139,10 +139,12 @@ class Validator:
             
             if token > 0:
                 if float(value) < 0:
+                    self.message = ''
                     self.message += "Number less than 0 on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                     return False
             elif token < 0:
                 if float(value) > 0:
+                    self.message = ''
                     self.message += "Number greater than 0 on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                     return False
 
@@ -183,10 +185,12 @@ class Validator:
         now = datetime.datetime.now()
         for index, value in enumerate(values):
             if self.validateDateFormat(value, date_format) == False:
+                self.message = ''
                 self.message += "Not a date on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
             if str(now.year) != value[-4:] :
-                self.message += "Invalid file - Date does not have the current year on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
+                self.message = ''
+                self.message += "Date does not have the current year on row " + str(index + 2) + " col " + str(col+1) + " (" + key +"): " + value + "<br>"
                 return False
 
         return True
