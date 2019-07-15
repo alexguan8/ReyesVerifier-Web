@@ -42,7 +42,7 @@ class Validator:
                                         'Server=sdbidinazsdbsx002.database.windows.net;'
                                         'Database=RBG_DM;'
                                         'uid=kmahajan@reyesholdings.com;pwd=Welcome9399!;'
-                                        "Trusted_Connection=yes;")
+                                        "authentication=ActiveDirectoryPassword;")
         cursor = connection.cursor()
 
         SQLCommand = ("SELECT REPORTING_ENTITY_DIM_ID FROM RBD.D_REPORTING_ENTITY")
