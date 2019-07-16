@@ -55,8 +55,8 @@
             "format": "1.0"
         },
         "Stops": {
-            "type": "int",
-            "format": "1"
+            "type": "float",
+            "format": "1.0"
         },
         "GP Dollars": {
             "type": "float",
