@@ -122,12 +122,7 @@ def getFileType(fileName):
         return "Static Percentages"
 
 def getCoID(fileName):
-    if "FDC" in fileName:
-        return "FDC"
-    if "FGC" in fileName:
-        return "FGC"
-    if "HJL" in fileName:
-        return 'HJL'
+    return fileName[0:3]
 
 @app.route('/history')
 def history():
@@ -139,9 +134,10 @@ def history():
         coID = getCoID(raw_name)
         date = dateUploaded(file)
         username = getUsername(file)
+        print(str(type(raw_name)) + str(type(fileType)) + str(type(coID)) + str(type(date)) + str(type(username)))
         print("adding a row to output for file: " + file)
         output = ("<tr><td><a href= '/uploads/VERIFIED_FILES/" + file + "'>" + raw_name + "</a></td>" +
-        "<td>" + coID + "</td>" +
+        "<td>" + coID + "</td>" + 
         "<td>" + fileType + "</td>" + 
         "<td>" + username + "</td>" + 
         "<td>" + date + "</td>" + 
