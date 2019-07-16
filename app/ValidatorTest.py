@@ -28,6 +28,8 @@ class Validator:
     def parseCSV(self):
         df = pd.read_csv(self.fileName, dtype='str') #we want strings because some are not ints
         df.columns = df.columns.str.strip()
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        print(df.to_string)
         if df.isnull().values.any():  #if there are empty cells it will not work
             df1 = df[df.isna().any(axis=1)].index
             self.message += "There are empty cells on row(s): "
