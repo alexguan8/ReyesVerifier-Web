@@ -16,7 +16,7 @@ import os
 # sort them that way
 
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__)) 
+APP_ROOT = '//SQBIDINSQLW001/DataSources/PlanData'
 
 VERIFIED_FILE_PATH = os.path.join(APP_ROOT, 'VERIFIED_FILES')
 
