@@ -106,7 +106,21 @@ class Validator:
             return False
         except ValueError:
             return True
-            
+    
+    def checkEdgeCases(self):
+        fileLines = []
+        with open(self.fileName, 'r') as my_file:
+            for index,line in enumerate(my_file):
+                if line in fileLines:
+                    for row in fileLines:
+                        if row == line:
+                            firstOccurence = fileLines.index(row)
+                            self.message = ''
+                            self.message += "Duplicate rows - Rows " + str(firstOccurence+1) + " and " + (str(index+1)) 
+                    return False
+                else:
+                    fileLines.append(line)
+
     def checkColInteger(self, key, token):
         col = list(self.dict.keys()).index(key)
         values = self.dict[key]
@@ -209,9 +223,10 @@ class Validator:
 
     def verifyFile(self):
 
-        if (self.compareFileNameandType() == False or self.dict == None or self.checkLabels() == False):
+        if (self.compareFileNameandType() == False or self.dict == None or self.checkLabels() == False or self.checkEdgeCases() == False):
             return False
 
+        
         if (self.checkLabels() == True):
             
             for coID in self.companies:
@@ -267,7 +282,7 @@ class Validator:
                 if (self.checkColIsPercentage(key) == False):
                     print("There is an issue in col " + str(index))
                     return False
-
+            
         return True
                 
 
