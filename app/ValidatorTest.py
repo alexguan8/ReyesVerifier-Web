@@ -29,7 +29,6 @@ class Validator:
         df = pd.read_csv(self.fileName, dtype='str') #we want strings because some are not ints
         df.columns = df.columns.str.strip()
         df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-        print(df.to_string)
         if df.isnull().values.any():  #if there are empty cells it will not work
             df1 = df[df.isna().any(axis=1)].index
             self.message += "There are empty cells on row(s): "
@@ -47,7 +46,7 @@ class Validator:
                                         "authentication=ActiveDirectoryPassword;")
         cursor = connection.cursor()
 
-        SQLCommand = ("SELECT REPORTING_ENTITY_DIM_ID FROM RBD.D_REPORTING_ENTITY")
+        SQLCommand = ("SELECT DSR_SALES_ORG_ID FROM RBD.D_SALES_ORG_EXT")
 
         cursor.execute(SQLCommand)
         companies = []
@@ -74,10 +73,11 @@ class Validator:
         return valid
 
     def validateDateFormat(self, date_text, date_format):
-        #print(date_text)
         try:
             datetime.datetime.strptime(date_text, date_format)
+            
             return True
+        
         except ValueError:
             return False
             #raise ValueError("Incorrect data format, should be MM-DD-YYYY")
@@ -108,7 +108,6 @@ class Validator:
             return True
             
     def checkColInteger(self, key, token):
-        print(key)
         col = list(self.dict.keys()).index(key)
         values = self.dict[key]
         for index, raw_value in enumerate(values):
@@ -232,7 +231,7 @@ class Validator:
                                     return False
                 if coID == 'HJL' and ('HJL' in self.fileName):           
                     for label in self.dict.keys():
-                        print(label)
+                      
                         if label == 'CostCtr':
                             col = list(self.dict.keys()).index(label)
                             for index,val in enumerate(self.dict['CostCtr']):
@@ -273,8 +272,7 @@ class Validator:
                 
 
     def verifyFileToStr(self):
-        print("Verifying " + self.fileName + " as filetype " + self.fileType)
-        print(self.verifyFile())
+        
         if self.verifyFile() == True:
             return self.fileName + " is valid! Uploaded to /VERIFIED_FILES"
         else:
