@@ -122,5 +122,6 @@
             "type": "percentage",
             "format": "none"
         }
-    }
+    },
+    "reyesPath": "//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/"
 }

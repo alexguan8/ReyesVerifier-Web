@@ -24,9 +24,11 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 VERIFIED_FILE_PATH = os.path.join(APP_ROOT, 'VERIFIED_FILES')
 
-reyesPath = '//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/'
-
 JSON_FILE_PATH = "app/formatSettings.json"
+
+with open(JSON_FILE_PATH) as json_file:
+    directorySettings = json.load(json_file)
+    reyesPath = directorySettings['reyesPath']
 
 USER_UPLOADING = "Some User"
 
@@ -142,8 +144,6 @@ def history():
         coID = getCoID(raw_name)
         date = dateUploaded(file)
         username = getUsername(file)
-        '''if os.path.exists(reyesPath + raw_name + '.csv') == False:
-            copyfile(VERIFIED_FILE_PATH + '/' + file, reyesPath + raw_name + '.csv')'''
         output = ("<tr><td><a href= '/uploads/VERIFIED_FILES/" + file + "'>" + raw_name + "</a></td>" +
         "<td>" + coID + "</td>" + 
         "<td>" + fileType + "</td>" + 
