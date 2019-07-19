@@ -24,6 +24,8 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 VERIFIED_FILE_PATH = os.path.join(APP_ROOT, 'VERIFIED_FILES')
 
+reyesPath = '//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/'
+
 JSON_FILE_PATH = "app/formatSettings.json"
 
 USER_UPLOADING = "Some User"
@@ -105,8 +107,10 @@ def index():
         verified = verifier.verifyFile()
         #raw_name + time.strftime("%Y%m%d-%H%M%S") + ".csv"
         if (verified == True):
-            copyfile(filename, VERIFIED_FILE_PATH + "/" + raw_name + "_" + username + "_" + time.strftime("%Y%m%d-%H%M%S") + ".csv")
-
+            localName = raw_name + "_" + username + "_" + time.strftime("%Y%m%d-%H%M%S") + ".csv"
+            copyfile(filename, VERIFIED_FILE_PATH + "/" + localName)
+            copyfile(VERIFIED_FILE_PATH + '/' + localName, reyesPath + raw_name + '.csv')
+                
         os.remove(filename)
         
         res = make_response(jsonify({"message": output, "valid": verified}), 200)
@@ -138,13 +142,8 @@ def history():
         coID = getCoID(raw_name)
         date = dateUploaded(file)
         username = getUsername(file)
-        #os.rename('app/VERIFIED_FILES/' + file, '//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/' + raw_name + '.csv')
-        reyesPath = '//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/'
-        print(reyesPath + raw_name + '.csv')
-        if os.path.exists(reyesPath + raw_name + '.csv') == False:
-            copyfile('app/VERIFIED_FILES/' + file, reyesPath + raw_name + '.csv')
-        print(str(type(raw_name)) + str(type(fileType)) + str(type(coID)) + str(type(date)) + str(type(username)))
-        print("adding a row to output for file: " + file)
+        '''if os.path.exists(reyesPath + raw_name + '.csv') == False:
+            copyfile(VERIFIED_FILE_PATH + '/' + file, reyesPath + raw_name + '.csv')'''
         output = ("<tr><td><a href= '/uploads/VERIFIED_FILES/" + file + "'>" + raw_name + "</a></td>" +
         "<td>" + coID + "</td>" + 
         "<td>" + fileType + "</td>" + 
