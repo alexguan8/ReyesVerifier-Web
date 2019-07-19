@@ -1,12 +1,16 @@
 from app import app
 from app import ValidatorTest as vdt
-from flask import render_template, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
+from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
+from ldap3 import Server, Connection, ALL, NTLM
+from flask_ldap3_login import LDAP3LoginManager
+from flask_login import LoginManager, login_user, UserMixin, current_user
+from flask_ldap3_login.forms import LDAPLoginForm
 from werkzeug.utils import secure_filename
 from shutil import copyfile
 from datetime import datetime
 import json
 import time
-import os
+import os, os.path
 
 # GOAL FOR 6/27
 # create VerifiedFile class to store the date uploaded of each file on creation
@@ -16,7 +20,7 @@ import os
 # sort them that way
 
 
-APP_ROOT = '//SQBIDINSQLW001/DataSources/PlanData'
+APP_ROOT = os.path.dirname(os.path.abspath(__file__)) 
 
 VERIFIED_FILE_PATH = os.path.join(APP_ROOT, 'VERIFIED_FILES')
 
@@ -68,24 +72,24 @@ def dateUploaded(fileName):
 
 #view functions go here
 
+
+
 @app.route('/', methods = ["GET", "POST"])
 @app.route('/index', methods = ["GET", "POST"])
 def index():
+    
+
     if request.method == "POST":
 
         file = request.files["file"]
         fileType = request.form.get("fileTypeData")
         username = request.form.get("usernameData")
 
-        print("username: " + username)
 
-        print("File uploaded")
-        print(file)
 
         filename = secure_filename(file.filename)
         file.save(filename)
 
-        print(filename)
         verifier = vdt.Validator(filename, fileType, JSON_FILE_PATH)
 
         raw_name = os.path.splitext(filename)[0]
@@ -134,6 +138,11 @@ def history():
         coID = getCoID(raw_name)
         date = dateUploaded(file)
         username = getUsername(file)
+        #os.rename('app/VERIFIED_FILES/' + file, '//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/' + raw_name + '.csv')
+        reyesPath = '//SQBIDINSQLW001/DataSources/PlanData/VERIFIED_FILES/'
+        print(reyesPath + raw_name + '.csv')
+        if os.path.exists(reyesPath + raw_name + '.csv') == False:
+            copyfile('app/VERIFIED_FILES/' + file, reyesPath + raw_name + '.csv')
         print(str(type(raw_name)) + str(type(fileType)) + str(type(coID)) + str(type(date)) + str(type(username)))
         print("adding a row to output for file: " + file)
         output = ("<tr><td><a href= '/uploads/VERIFIED_FILES/" + file + "'>" + raw_name + "</a></td>" +
