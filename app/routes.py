@@ -2,6 +2,7 @@ from app import app
 from app import ValidatorTest as vdt
 from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
 from flask_simpleldap import LDAP
+from flask import Flask, g, request, session, redirect, url_for
 from werkzeug.utils import secure_filename
 from shutil import copyfile
 from datetime import datetime
@@ -10,9 +11,15 @@ import time
 import os, os.path
 
 app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
-app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise,dc=reyesholdings,dc=com'
-app.config['LDAP_USERNAME'] = 'CN=Mahajan Kabir,OU=Reyes Holdings Enterprise,DC=reyesholdings,DC=com'
+app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
+app.config['LDAP_USERNAME'] = 'kmahajan@reyesholdings.com'
 app.config['LDAP_PASSWORD'] = 'Welcome9399!'
+
+app.config['LDAP_OBJECTS_DN'] = 'distinguishedName'
+app.config['LDAP_OPENLDAP'] = False
+app.config['LDAP_USE_SSL'] = True
+
+
 
 ldap = LDAP(app)
 
@@ -72,16 +79,39 @@ def dateUploaded(fileName):
     
 
 #view functions go here
-@app.route('/', methods = ["GET", "POST"])
-@app.route('/login', methods = ["GET", "POST"])
-@ldap.basic_auth_required
-def ldap_protected():
-    return 'Success!'
+'''@app.before_request
+def before_request():
+    g.user = None
+    if 'user_id' in session:
+        # This is where you'd query your database to get the user info.
+        g.user = {}
+        # Create a global with the LDAP groups the user is a member of.
+        g.ldap_groups = ldap.get_user_groups(user=session['user_id'])
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if g.user:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        user = request.form['user']
+        passwd = request.form['passwd']
+        test = ldap.bind_user(user, passwd)
+        if test is None or passwd == '':
+            return 'Invalid credentials'
+        else:
+            session['user_id'] = request.form['user']
+            return redirect('/')
+    return """<form action="" method="post">
+                user: <input name="user"><br>
+                password:<input type="password" name="passwd"><br>
+                <input type="submit" value="Submit"></form>"""'''
 
 
 
 @app.route('/', methods = ["GET", "POST"])
 @app.route('/index', methods = ["GET", "POST"])
+@ldap.basic_auth_required
 def index():
     
 
