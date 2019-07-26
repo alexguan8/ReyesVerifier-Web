@@ -1,7 +1,7 @@
 from app import app
 from app import ValidatorTest as vdt
 from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
-from flask_ldap import LDAP
+from flask_simpleldap import LDAP
 from werkzeug.utils import secure_filename
 from shutil import copyfile
 from datetime import datetime
@@ -10,12 +10,11 @@ import time
 import os, os.path
 
 app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
-app.config['LDAP_DOMAIN'] = 'reyesholdings.com'
-app.config['LDAP_SEARCH_BASE'] = 'OU=Distribution,DC=reyesholdings,DC=com'
+app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise,dc=reyesholdings,dc=com'
+app.config['LDAP_USERNAME'] = 'CN=Mahajan Kabir,OU=Reyes Holdings Enterprise,DC=reyesholdings,DC=com'
+app.config['LDAP_PASSWORD'] = 'Welcome9399!'
 
 ldap = LDAP(app)
-app.secret_key = "secret"
-app.add_url_rule('/login', 'login', ldap.login, methods=['GET', 'POST'])
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) 
@@ -73,10 +72,16 @@ def dateUploaded(fileName):
     
 
 #view functions go here
+@app.route('/', methods = ["GET", "POST"])
+@app.route('/login', methods = ["GET", "POST"])
+@ldap.basic_auth_required
+def ldap_protected():
+    return 'Success!'
+
+
 
 @app.route('/', methods = ["GET", "POST"])
 @app.route('/index', methods = ["GET", "POST"])
-@ldap.login_required
 def index():
     
 
