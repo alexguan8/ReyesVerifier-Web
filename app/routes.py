@@ -12,7 +12,7 @@ import time
 import os, os.path
 
 app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
-app.config['LDAP_BASE_DN'] = 'OU=Users, OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
+app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
 app.config['LDAP_USERNAME'] = 'CN=Mahajan Kabir,OU=Information Technology,OU=Users,OU=Reyes Holdings Enterprise,DC=reyesholdings,DC=com'
 app.config['LDAP_PASSWORD'] = 'Welcome9399!'
 app.config['LDAP_USE_SSL'] = True
@@ -153,7 +153,7 @@ def index():
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
-    
+
 def getFileType(fileName):
     if "sales" in fileName.lower():
         return "Sales"
