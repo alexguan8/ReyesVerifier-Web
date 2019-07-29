@@ -1,6 +1,32 @@
 $(document).ready(function() {
-    reset();
-    resetInput();
+    var username_value = prompt("Username");
+    var return_value = prompt("Password:");
+
+    var spawn = require("child_process").spawn,
+        child;
+    var shellPath = path.join(__dirname, '..', '..', 'AD_Authenticate.ps1', ' ' + username_value, ' ' + return_value)
+    child = spawn("powershell.exe", [shellPath]);
+
+    child.stdout.on("data", function(data) {
+        console.log("Powershell Data: " + data);
+    });
+    child.stderr.on("data", function(data) {
+        console.log("Powershell Errors: " + data);
+    });
+    child.on("exit", function() {
+        console.log("Powershell Script finished");
+    });
+
+
+
+
+    if (return_value === "reyespassword") {
+        reset();
+        resetInput();
+    } else {
+        //redirect back to home
+        window.location.href = "/index";
+    }
 });
 
 $("#exampleInputEmail1").change(function(e) {
