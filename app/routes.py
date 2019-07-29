@@ -2,6 +2,7 @@ from app import app
 from app import ValidatorTest as vdt
 from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
 from flask_simpleldap import LDAP
+import ldap as l
 from flask import Flask, g, request, session, redirect, url_for
 from werkzeug.utils import secure_filename
 from shutil import copyfile
@@ -11,7 +12,7 @@ import time
 import os, os.path
 
 app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
-app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
+app.config['LDAP_BASE_DN'] = 'OU=Users, OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
 app.config['LDAP_USERNAME'] = 'CN=Mahajan Kabir,OU=Information Technology,OU=Users,OU=Reyes Holdings Enterprise,DC=reyesholdings,DC=com'
 app.config['LDAP_PASSWORD'] = 'Welcome9399!'
 app.config['LDAP_USE_SSL'] = True
@@ -148,6 +149,11 @@ def index():
         
     return render_template('index.html')
 
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('index'))
+    
 def getFileType(fileName):
     if "sales" in fileName.lower():
         return "Sales"
