@@ -1,7 +1,10 @@
 from app import app
 from app import ValidatorTest as vdt
 from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
-from flask_ldap import LDAP
+from ldap3 import Server, Connection, ALL, NTLM
+from flask_ldap3_login import LDAP3LoginManager
+from flask_login import LoginManager, login_user, UserMixin, current_user
+from flask_ldap3_login.forms import LDAPLoginForm
 from werkzeug.utils import secure_filename
 from shutil import copyfile
 from datetime import datetime
@@ -9,13 +12,12 @@ import json
 import time
 import os, os.path
 
-app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
-app.config['LDAP_DOMAIN'] = 'reyesholdings.com'
-app.config['LDAP_SEARCH_BASE'] = 'OU=Distribution,DC=reyesholdings,DC=com'
+# GOAL FOR 6/27
+# create VerifiedFile class to store the date uploaded of each file on creation
+# so that we can sort the verified files by date
 
-ldap = LDAP(app)
-app.secret_key = "secret"
-app.add_url_rule('/login', 'login', ldap.login, methods=['GET', 'POST'])
+# OR use os modules to append creation dates to the filename and
+# sort them that way
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) 
@@ -74,9 +76,10 @@ def dateUploaded(fileName):
 
 #view functions go here
 
+
+
 @app.route('/', methods = ["GET", "POST"])
 @app.route('/index', methods = ["GET", "POST"])
-@ldap.login_required
 def index():
     
 
@@ -85,6 +88,7 @@ def index():
         file = request.files["file"]
         fileType = request.form.get("fileTypeData")
         username = request.form.get("usernameData")
+
 
 
         filename = secure_filename(file.filename)
@@ -174,4 +178,3 @@ def settings():
 
     flash("<a href= '/uploads/formatSettings.json'>Current Settings File</a>")
     return render_template("settings.html")
-
