@@ -1,24 +1,25 @@
 from app import app
 from app import ValidatorTest as vdt
 from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
-from ldap3 import Server, Connection, ALL, NTLM
-from flask_ldap3_login import LDAP3LoginManager
-from flask_login import LoginManager, login_user, UserMixin, current_user
-from flask_ldap3_login.forms import LDAPLoginForm
+from flask_simpleldap import LDAP
+import ldap as l
+from flask import Flask, g, request, session, redirect, url_for
 from werkzeug.utils import secure_filename
 from shutil import copyfile
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import time
 import os, os.path
 
-# GOAL FOR 6/27
-# create VerifiedFile class to store the date uploaded of each file on creation
-# so that we can sort the verified files by date
+app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
+app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
+app.config['LDAP_USERNAME'] = 'CN=Mahajan Kabir,OU=Information Technology,OU=Users,OU=Reyes Holdings Enterprise,DC=reyesholdings,DC=com'
+app.config['LDAP_PASSWORD'] = 'Welcome9399!'
+app.config['LDAP_USE_SSL'] = True
 
-# OR use os modules to append creation dates to the filename and
-# sort them that way
 
+
+ldap = LDAP(app)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) 
 
@@ -80,11 +81,11 @@ def dateUploaded(fileName):
 
 @app.route('/', methods = ["GET", "POST"])
 @app.route('/index', methods = ["GET", "POST"])
+@ldap.basic_auth_required
 def index():
-    
 
     if request.method == "POST":
-
+        
         file = request.files["file"]
         fileType = request.form.get("fileTypeData")
         username = request.form.get("usernameData")
@@ -118,8 +119,9 @@ def index():
         res = make_response(jsonify({"message": output, "valid": verified}), 200)
 
         return res
-        
+    
     return render_template('index.html')
+
 
 def getFileType(fileName):
     if "sales" in fileName.lower():
