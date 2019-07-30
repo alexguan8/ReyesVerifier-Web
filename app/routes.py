@@ -166,7 +166,6 @@ def download(file_name):
         return str(e)
 
 @app.route("/settings", methods = ["GET", "POST"])
-@ldap.basic_auth_required
 def settings():
     if request.method == "POST":
         #use the request object to get the file from the file input in index.html
