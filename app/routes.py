@@ -6,7 +6,7 @@ import ldap as l
 from flask import Flask, g, request, session, redirect, url_for
 from werkzeug.utils import secure_filename
 from shutil import copyfile
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import time
 import os, os.path
@@ -18,8 +18,8 @@ app.config['LDAP_PASSWORD'] = 'Welcome9399!'
 app.config['LDAP_USE_SSL'] = True
 
 
-ldap = LDAP(app)
 
+ldap = LDAP(app)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) 
 
@@ -76,44 +76,20 @@ def dateUploaded(fileName):
     
 
 #view functions go here
-'''@app.before_request
-def before_request():
-    g.user = None
-    if 'user_id' in session:
-        # This is where you'd query your database to get the user info.
-        g.user = {}
-        # Create a global with the LDAP groups the user is a member of.
-        g.ldap_groups = ldap.get_user_groups(user=session['user_id'])
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if g.user:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        user = request.form['user']
-        passwd = request.form['passwd']
-        test = ldap.bind_user(user, passwd)
-        if test is None or passwd == '':
-            return 'Invalid credentials'
-        else:
-            session['user_id'] = request.form['user']
-            return redirect('/')
-    return """<form action="" method="post">
-                user: <input name="user"><br>
-                password:<input type="password" name="passwd"><br>
-                <input type="submit" value="Submit"></form>"""'''
-
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(seconds=1)
+    session.modified = True
 
 
 @app.route('/', methods = ["GET", "POST"])
 @app.route('/index', methods = ["GET", "POST"])
 @ldap.basic_auth_required
 def index():
-    
 
     if request.method == "POST":
-
+        
         file = request.files["file"]
         fileType = request.form.get("fileTypeData")
         username = request.form.get("usernameData")
@@ -146,13 +122,9 @@ def index():
         res = make_response(jsonify({"message": output, "valid": verified}), 200)
 
         return res
-        
+    
     return render_template('index.html')
 
-@app.route('/logout')
-def logout():
-    session.pop('user_id', None)
-    return redirect(url_for('index'))
 
 def getFileType(fileName):
     if "sales" in fileName.lower():
