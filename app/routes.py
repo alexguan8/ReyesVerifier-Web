@@ -73,15 +73,39 @@ def dateUploaded(fileName):
     myTime = datetime.strptime(raw_date, "%Y%m%d-%H%M%S")
 
     return myTime.strftime("%m/%d/%Y -- %H:%M:%S")
-    
+
+def getFileType(fileName):
+    if "sales" in fileName.lower():
+        return "Sales"
+    if "payroll" in fileName.lower():
+        return "Payroll"
+    if "sales" in fileName.lower():
+        return "Sales"
+    if "static percentage" or "static_percentage" in fileName.lower():
+        return "Static Percentages"
+
+def getCoID(fileName):
+    return fileName[0:3]
 
 #view functions go here
 
-
+@app.before_request
+def before_request():
+    if (session.get("logged_in") == True):
+        user = {"name": session["username"]}
+        g.user = user
 
 @app.route('/', methods = ["GET", "POST"])
-@app.route('/index', methods = ["GET", "POST"])
+@app.route('/login')
 @ldap.basic_auth_required
+def login():
+    flash("You are logged in, " + g.ldap_username)
+    session['logged_in'] = True
+    session['username'] = g.ldap_username
+    return render_template('login.html')
+
+@app.route('/uploads', methods = ["GET", "POST"])
+@ldap.login_required
 def index():
 
     if request.method == "POST":
@@ -119,24 +143,10 @@ def index():
         res = make_response(jsonify({"message": output, "valid": verified}), 200)
 
         return res
-    
     return render_template('index.html')
 
-
-def getFileType(fileName):
-    if "sales" in fileName.lower():
-        return "Sales"
-    if "payroll" in fileName.lower():
-        return "Payroll"
-    if "sales" in fileName.lower():
-        return "Sales"
-    if "static percentage" or "static_percentage" in fileName.lower():
-        return "Static Percentages"
-
-def getCoID(fileName):
-    return fileName[0:3]
-
 @app.route('/history')
+@ldap.login_required
 def history():
     listOfFiles = os.listdir(VERIFIED_FILE_PATH)
     output="" 
@@ -166,7 +176,7 @@ def download(file_name):
         return str(e)
 
 @app.route("/settings", methods = ["GET", "POST"])
-@ldap.basic_auth_required
+@ldap.login_required
 def settings():
     if request.method == "POST":
         #use the request object to get the file from the file input in index.html
