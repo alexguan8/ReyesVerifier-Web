@@ -77,6 +77,19 @@ def dateUploaded(fileName):
     return myTime.strftime("%m/%d/%Y -- %H:%M:%S")
     
 
+def getFileType(fileName):
+    if "sales" in fileName.lower():
+        return "Sales"
+    if "payroll" in fileName.lower():
+        return "Payroll"
+    if "sales" in fileName.lower():
+        return "Sales"
+    if "static percentage" or "static_percentage" in fileName.lower():
+        return "Static Percentages"
+
+def getCoID(fileName):
+    return fileName[0:3]
+
 #view functions go here
 @app.before_request
 def before_request():
@@ -125,19 +138,6 @@ def index():
     
     return render_template('index.html')
 
-
-def getFileType(fileName):
-    if "sales" in fileName.lower():
-        return "Sales"
-    if "payroll" in fileName.lower():
-        return "Payroll"
-    if "sales" in fileName.lower():
-        return "Sales"
-    if "static percentage" or "static_percentage" in fileName.lower():
-        return "Static Percentages"
-
-def getCoID(fileName):
-    return fileName[0:3]
 
 @app.route('/history')
 def history():
