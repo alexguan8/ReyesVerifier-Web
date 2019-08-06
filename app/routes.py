@@ -149,6 +149,9 @@ def index():
 @app.route('/history')
 @ldap.login_required
 def history():
+    if (session.get("logged_in") == False or 'logged_in' not in session):
+        return redirect('/login')
+
     listOfFiles = os.listdir(VERIFIED_FILE_PATH)
     output=""  
     for file in listOfFiles:
@@ -179,6 +182,9 @@ def download(file_name):
 @app.route("/settings", methods = ["GET", "POST"])
 @ldap.login_required
 def settings():
+    if (session.get("logged_in") == False or 'logged_in' not in session):
+        return redirect('/login')
+
     if request.method == "POST":
         #use the request object to get the file from the file input in index.html
         jsonFile = request.files['jsonFileInput']
