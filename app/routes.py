@@ -96,7 +96,6 @@ def before_request():
         user = {"name": session["username"]}
         g.user = user
 
-@app.route('/', methods = ["GET", "POST"])
 @app.route('/login')
 @ldap.basic_auth_required
 def login():
@@ -104,9 +103,11 @@ def login():
     session['username'] = g.ldap_username
     return redirect('/uploads')
 
+@app.route('/', methods = ["GET", "POST"])
 @app.route('/uploads', methods = ["GET", "POST"])
-@ldap.login_required
 def index():
+    if (session.get("logged_in") == False or 'logged_in' not in session):
+        return redirect('/login')
 
     if request.method == "POST":
         
