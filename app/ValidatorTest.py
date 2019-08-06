@@ -42,7 +42,7 @@ class Validator:
         connection = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                                         'Server=sdbidinazsdbsx002.database.windows.net;'
                                         'Database=RBG_DM;'
-                                        'uid=kmahajan@reyesholdings.com;pwd=Welcome9399!;'
+                                        'uid=aguan@reyesholdings.com;pwd=Abcd3456!;'
                                         "authentication=ActiveDirectoryPassword;")
         cursor = connection.cursor()
 
