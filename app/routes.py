@@ -95,6 +95,9 @@ def before_request():
     if (session.get("logged_in") == True):
         user = {"name": session["username"]}
         g.user = user
+    else:
+        session['logged_in'] = False
+        g.user = {"name": "undefined"}
 
 @app.route('/login')
 @ldap.basic_auth_required
