@@ -2,6 +2,7 @@ from app import app
 from app import ValidatorTest as vdt
 from flask import Flask, render_template, render_template_string, request, flash, redirect, make_response, jsonify, session, url_for, send_from_directory, send_file
 from flask_simpleldap import LDAP
+from flask_login import current_user
 import ldap as l
 from flask import Flask, g, request, session, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -9,12 +10,13 @@ from shutil import copyfile
 from datetime import datetime, timedelta
 import json
 import time
+import ssl
 import os, os.path
 
 app.config['LDAP_HOST'] = 'rhldap.reyesholdings.com'
 app.config['LDAP_BASE_DN'] = 'OU=Reyes Holdings Enterprise, dc=reyesholdings,dc=com'
-app.config['LDAP_USERNAME'] = 'CN=Mahajan Kabir,OU=Information Technology,OU=Users,OU=Reyes Holdings Enterprise,DC=reyesholdings,DC=com'
-app.config['LDAP_PASSWORD'] = 'Welcome9399!'
+app.config['LDAP_USERNAME'] = 'BIFileValidator'
+app.config['LDAP_PASSWORD'] = 'Welcome0805!'
 app.config['LDAP_USE_SSL'] = True
 
 
@@ -76,11 +78,12 @@ def dateUploaded(fileName):
     
 
 #view functions go here
-
-
+@app.before_request
+def before_request():
+    g.user = current_user
 
 @app.route('/', methods = ["GET", "POST"])
-@app.route('/index', methods = ["GET", "POST"])
+@app.route('/login', methods = ["GET", "POST"])
 @ldap.basic_auth_required
 def index():
 
